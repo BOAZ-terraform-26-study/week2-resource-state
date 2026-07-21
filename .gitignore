@@ -1,0 +1,28 @@
+# --- Terraform ---
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# 변수/시크릿: 절대 커밋 금지
+*.tfvars
+*.tfvars.json
+!example.tfvars
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI 설정/플랜 산출물
+.terraformrc
+terraform.rc
+*.tfplan
+
+# provider lock은 커밋 (.terraform.lock.hcl 무시 안 함)
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
