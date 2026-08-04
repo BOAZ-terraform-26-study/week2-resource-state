@@ -19,6 +19,17 @@ override.tf.json
 .terraformrc
 terraform.rc
 *.tfplan
+plan.out
+
+# week2 실습 산출물: state와 같은 등급의 비밀 / 잡파일
+state.json
+*.tfstate.json
+graph.dot
+graph.png
+
+# SSH 키: 오늘 만들지 않지만 실수 방지
+*.pem
+id_rsa*
 
 # provider lock은 커밋 (.terraform.lock.hcl 무시 안 함)
 
@@ -26,3 +37,7 @@ terraform.rc
 .DS_Store
 .idea/
 .vscode/
+
+# PDF 빌드 보조 파일 (로컬 전용)
+lecture/build-pdf.sh
+lecture/style.css
