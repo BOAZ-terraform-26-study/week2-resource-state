@@ -1,10 +1,10 @@
 # Week 2. 리소스 문법 & State `[비대면]`
 
 > 📘 **워크북 2종** — 개념 파트는 개념 워크북, 실습 파트는 실습 워크북을 위에서 아래로 따라갑니다.
-> - **[개념 워크북 »](./lecture/개념워크북.md)** (12분) — 참조·의존성 그래프·데이터 소스·tfstate 내부·drift·교체(`-/+`)
-> - **[실습 워크북 »](./lecture/실습워크북.md)** (43분) — `practice/`에서 VPC→EC2 apply → state 해부 → destroy
+> - **[개념 워크북 PDF »](./lecture/개념워크북.pdf)** (12분) — 참조·의존성 그래프·데이터 소스·tfstate 내부·drift·교체(`-/+`) · [마크다운](./lecture/개념워크북.md)
+> - **[실습 워크북 PDF »](./lecture/실습워크북.pdf)** (43분) — `practice/`에서 VPC→EC2 apply → state 해부 → destroy · [마크다운](./lecture/실습워크북.md)
 >
-> *(PDF 배포본은 week1과 같은 방식으로 `.md`에서 export해 `lecture/`에 함께 커밋하면 됩니다.)*
+> *(PDF는 week1과 같은 방식 — `lecture/build-pdf.sh`(pandoc + Chrome)로 `.md`에서 뽑습니다. `.md`를 고쳤으면 반드시 다시 돌려 PDF를 맞춰주세요.)*
 
 > 이번 주가 끝나면: **VPC부터 EC2까지 7개를 코드로 배포하고, `tfstate` 안에서 내가 적지 않은 의존성 그래프를 찾아내고, 역순으로 전부 지울 수 있다.**
 
