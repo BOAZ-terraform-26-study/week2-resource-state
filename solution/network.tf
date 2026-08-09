@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
-# network.tf — VPC / subnet / IGW / route table / association  (리소스 5개)
-# 화살표(참조) ① ② ③ ④ ⑤ ⑥ ⑦ 이 이 파일에서 만들어진다.
+# network.tf: VPC / subnet / IGW / route table / association  (리소스 5개)
+# 참조 ① ② ③ ④ ⑤ ⑥ ⑦ 이 이 파일에서 만들어진다.
 # ---------------------------------------------------------------------------
 
 # 이 계정에서 실제로 쓸 수 있는 AZ 목록을 AWS에 물어본다.
@@ -19,9 +19,9 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "public" {
-  vpc_id            = aws_vpc.main.id # 화살표 ①
+  vpc_id            = aws_vpc.main.id # 참조 ①
   cidr_block        = "10.0.1.0/24"
-  availability_zone = data.aws_availability_zones.available.names[0] # 화살표 ②
+  availability_zone = data.aws_availability_zones.available.names[0] # 참조 ②
 
   # 이 서브넷에서 뜨는 인스턴스는 퍼블릭 IPv4를 자동으로 받는다.
   # EIP를 만들지 않아도 인터넷에서 도달 가능한 주소가 붙는 이유가 이 한 줄이다.
@@ -32,17 +32,17 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.main.id # 화살표 ③
+  vpc_id = aws_vpc.main.id # 참조 ③
 
   tags = { Name = "${var.project_name}-igw" }
 }
 
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id # 화살표 ④
+  vpc_id = aws_vpc.main.id # 참조 ④
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.gw.id # 화살표 ⑤ — IGW를 먼저 만들게 하는 참조
+    gateway_id = aws_internet_gateway.gw.id # 참조 ⑤. IGW를 먼저 만들게 하는 참조
   }
 
   tags = { Name = "${var.project_name}-rt-public" }
@@ -51,8 +51,8 @@ resource "aws_route_table" "public" {
 # 라우트 테이블을 서브넷에 실제로 붙인다.
 # "연결" 자체가 하나의 리소스다. 이게 없으면 IGW가 있어도 밖으로 나갈 수 없다.
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public.id      # 화살표 ⑥
-  route_table_id = aws_route_table.public.id # 화살표 ⑦
+  subnet_id      = aws_subnet.public.id      # 참조 ⑥
+  route_table_id = aws_route_table.public.id # 참조 ⑦
 }
 
 # ---------------------------------------------------------------------------

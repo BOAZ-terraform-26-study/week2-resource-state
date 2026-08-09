@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
-# compute.tf — 리소스 2개(security group / EC2)
-# 화살표 ⑧ ~ ⑪ 을 여기서 긋습니다.  자세한 설명은 실습워크북 B-1
+# compute.tf: 리소스 2개(security group / EC2)
+# 참조 ⑧ ~ ⑪ 을 여기서 긋습니다.  자세한 설명은 실습워크북 B-1
 # ---------------------------------------------------------------------------
 
 # [주어짐] 최신 Amazon Linux 2023 AMI. AMI ID 하드코딩 금지.
@@ -37,7 +37,7 @@ data "aws_ami" "al2023" {
   }
 }
 
-# TODO(L1): 보안 그룹.  (워크북 B-1 · 화살표 ⑧)
+# TODO(L1): 보안 그룹.  (워크북 B-1 · 참조 ⑧)
 #   - 타입/이름: resource "aws_security_group" "web"
 #   - name        = "${var.project_name}-web-sg"
 #   - description = "boaz w2 lab: SSH from my IP only"
@@ -48,7 +48,7 @@ data "aws_ami" "al2023" {
 #   - tags = { Name = "${var.project_name}-web-sg" }
 
 
-# TODO(L1): EC2 인스턴스.  (워크북 B-1 · 화살표 ⑨ ⑩ ⑪)
+# TODO(L1): EC2 인스턴스.  (워크북 B-1 · 참조 ⑨ ⑩ ⑪)
 #   - 타입/이름: resource "aws_instance" "web"
 #   - ami                    = data.aws_ami.al2023.id       <- 오늘 유일한 data. 참조 (⑪)
 #   - instance_type          = var.instance_type

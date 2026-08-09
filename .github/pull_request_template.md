@@ -11,13 +11,13 @@
 - [ ] `terraform init` 성공, `.terraform.lock.hcl` 커밋됨
 - [ ] `apply` 두 번 성공 (`5 added` → `2 added`), `state list` 9줄
 - [ ] `state show aws_instance.web`으로 `private_ip` / `public_ip` / `instance_state` 확인
-- [ ] **`dependencies` 배열을 열어 화살표 지도와 대조**
+- [ ] **`dependencies` 배열을 열어 의존성 지도와 대조**
 - [ ] drift 실습(콘솔 태그 변경 → `plan`)까지 해봄
 - [ ] **`terraform destroy` 완료 (`7 destroyed`) & `state list` 빈 출력**
 - [ ] `git status`로 자격증명 / `*.tfvars` / `*.tfstate` / `state.json` / `*.pem` 커밋 안 됐는지 확인
 - [ ] 제출 파일의 **퍼블릭 IP를 마스킹**했는지 확인
 
-### 계정 잔존 점검 (C-4) — 콘솔 또는 `scripts/check-leftover.sh`
+### 계정 잔존 점검 (C-4): 콘솔 또는 `scripts/check-leftover.sh`
 - [ ] EC2 인스턴스: `terminated` 만
 - [ ] EBS 볼륨(`available` 상태): 0개
 - [ ] Elastic IP: 0개
@@ -27,12 +27,12 @@
 ### 오늘 만든 것 (요약)
 
 
-### 화살표 → 그래프 확인
+### 참조 → 그래프 확인
 `aws_instance.web`의 `dependencies` 배열:
 ```
 (붙여넣기)
 ```
-- 이 배열이 화살표 지도의 몇 번인가:
+- 이 배열이 의존성 지도의 몇 번인가:
 - `aws_route_table_association.public`이 이 배열에 **없는** 이유:
 
 ### `~` vs `-/+` (심화 B-6를 했다면)
@@ -49,10 +49,10 @@
 
 ### destroy 전 `terraform state list`
 ```
-(destroy하면 사라지니 미리 복사해둔 것 — 9줄)
+(destroy하면 사라지니 미리 복사해둔 것, 9줄)
 ```
 
 ### destroy 후 `terraform state list`
 ```
-(완전히 빈 출력이어야 함 — 데이터 소스까지 사라집니다)
+(완전히 빈 출력이어야 함. 데이터 소스까지 사라집니다)
 ```

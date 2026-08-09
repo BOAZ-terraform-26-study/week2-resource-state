@@ -25,7 +25,7 @@ submissions/
 - **`practice/`는 건드리지 마세요.** 거기는 다음 사람이 풀 `# TODO` 스켈레톤입니다.
 - **`terraform.tfvars`(내 공인 IP) · `terraform.tfstate` · `state.json`은 절대 커밋 금지.** `.gitignore`가 막고 있지만, 푸시 전에 `git status`로 한 번 더 확인하세요.
 - `state-list.txt`에서 **두 가지를 반드시 지우거나 마스킹**하세요.
-  - **퍼블릭 IP** (`x.x.x.x`) — 22번이 열려 있던 서버 주소
+  - **퍼블릭 IP** (`x.x.x.x`). 22번이 열려 있던 서버 주소
   - **ARN 안의 계정번호 12자리** (`arn:aws:ec2:ap-northeast-2:123456789012:instance/...` → `<account-id>`)
 
 ## `state-list.txt`에 넣을 것 (destroy 전에 저장)

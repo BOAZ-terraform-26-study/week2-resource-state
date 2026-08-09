@@ -9,7 +9,7 @@ output "subnet_id" {
 }
 
 output "subnet_az" {
-  description = "서브넷이 놓인 AZ — data.aws_availability_zones 가 골라준 값"
+  description = "서브넷이 놓인 AZ. data.aws_availability_zones 가 골라준 값"
   value       = aws_subnet.public.availability_zone
 }
 
