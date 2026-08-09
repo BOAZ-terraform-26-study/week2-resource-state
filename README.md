@@ -1,10 +1,10 @@
-# Week 2. 리소스 문법 & State `[비대면]`
+# Week 2. 리소스 문법 & State
 
-> 📘 **워크북 2종** — 개념 파트는 개념 워크북, 실습 파트는 실습 워크북을 위에서 아래로 따라갑니다.
-> - **[개념 워크북 PDF »](./lecture/개념워크북.pdf)** (12분) — 참조·의존성 그래프·데이터 소스·tfstate 내부·drift·교체(`-/+`) · [마크다운](./lecture/개념워크북.md)
-> - **[실습 워크북 PDF »](./lecture/실습워크북.pdf)** (43분) — `practice/`에서 VPC→EC2 apply → state 해부 → destroy · [마크다운](./lecture/실습워크북.md)
+> 📘 **워크북 2종**. 개념 파트는 개념 워크북, 실습 파트는 실습 워크북을 위에서 아래로 따라갑니다.
+> - **[개념 워크북 PDF »](./lecture/개념워크북.pdf)** (12분). 참조·의존성 그래프·데이터 소스·tfstate 내부·drift·교체(`-/+`) · [마크다운](./lecture/개념워크북.md)
+> - **[실습 워크북 PDF »](./lecture/실습워크북.pdf)** (43분). `practice/`에서 VPC→EC2 apply → state 해부 → destroy · [마크다운](./lecture/실습워크북.md)
 >
-> *(PDF는 week1과 같은 방식 — `lecture/build-pdf.sh`(pandoc + Chrome)로 `.md`에서 뽑습니다. `.md`를 고쳤으면 반드시 다시 돌려 PDF를 맞춰주세요.)*
+> *(PDF는 `.md`를 HTML로 바꿔 headless Chrome 인쇄로 뽑은 배포본입니다. 빌드 스크립트는 리포에 두지 않았으니, `.md`를 고쳤으면 PDF도 함께 다시 만들어 주세요. 원본은 항상 `.md` 쪽입니다.)*
 
 > 이번 주가 끝나면: **VPC부터 EC2까지 7개를 코드로 배포하고, `tfstate` 안에서 내가 적지 않은 의존성 그래프를 찾아내고, 역순으로 전부 지울 수 있다.**
 
@@ -30,7 +30,7 @@
 - 예습 체크: "왜 AMI ID를 하드코딩하면 안 되는지" 한 문장으로 말할 수 있다
 
 > [!IMPORTANT]
-> **예습 과제 — 세션 3일 전까지 실행하고 결과를 Discord에 올려주세요.** 이걸 안 하면 세션 중에 실습 시간이 날아갑니다.
+> **예습 과제. 세션 3일 전까지 실행하고 결과를 Discord에 올려주세요.** 이걸 안 하면 세션 중에 실습 시간이 날아갑니다.
 >
 > **Discord에는 ③④⑤의 결과만 올리세요. ②의 계정번호 12자리는 올리지 않습니다.**
 >
@@ -40,14 +40,14 @@
 >
 > aws sts get-caller-identity --query Account --output text   # ② 자격증명 (성공/실패만 보고, 계정번호는 올리지 말 것)
 >
-> # ③ EC2 vCPU 쿼터 — 2 이상이어야 함. 0이면 증설 요청에 며칠 걸립니다
+> # ③ EC2 vCPU 쿼터. 2 이상이어야 함. 0이면 증설 요청에 며칠 걸립니다
 > aws service-quotas get-service-quota --region $R --service-code ec2 \
 >   --quota-code L-1216C47A --query 'Quota.Value' --output text
 >
-> # ④ VPC 여유 — 5 미만이어야 함 (리전당 기본 5개)
+> # ④ VPC 여유. 5 미만이어야 함 (리전당 기본 5개)
 > aws ec2 describe-vpcs --region $R --query 'length(Vpcs)' --output text
 >
-> # ⑤ 권한 dry-run — "DryRunOperation" 이 나오면 통과
+> # ⑤ 권한 dry-run. "DryRunOperation" 이 나오면 통과
 > aws ec2 create-vpc --region $R --cidr-block 10.99.0.0/16 --dry-run 2>&1 | tail -1
 > ```
 
@@ -55,17 +55,17 @@
 | 시간 | 구성 | 내용 |
 |------|------|------|
 | 0~10분 | 회고 | 랜덤 지목 1~2명, 지난주 배운 것 30초 |
-| 10~15분 | 과제① 리뷰 | 대표 PR 화면 공유 — **15분 하드컷**, 초과분은 Discord 스레드로 |
-| 15~27분 | Block A (12분) | 화살표 ①~⑦ 긋고 **네트워크 5개** apply |
-| 27~47분 | Block B (20분) | 화살표 ⑧~⑪ + EC2 apply → **state 해부** → drift |
+| 10~15분 | 과제① 리뷰 | 대표 PR 화면 공유. **15분 하드컷**, 초과분은 Discord 스레드로 |
+| 15~27분 | Block A (12분) | 참조 ①~⑦ 잇고 **네트워크 5개** apply |
+| 27~47분 | Block B (20분) | 참조 ⑧~⑪ + EC2 apply → **state 해부** → drift |
 | 47~58분 | Block C (11분) | destroy + **계정 잔존 점검** |
 | 58~60분 | 마무리 | 2주차 정리, 3주차 예고 |
 
 > 개념 파트(12분)는 별도 슬롯이 아니라 `plan`/`apply`가 도는 **대기 시간에** 얹습니다.
 
-## 4. 실습 개요 — VPC + EC2
+## 4. 실습 개요. VPC + EC2
 
-리소스 **7개**, 참조(화살표) **11개**.
+리소스 **7개**, 참조 **11개**.
 
 ```
 VPC (10.0.0.0/16)
@@ -85,14 +85,14 @@ terraform plan                       # "Plan: 2 to add"
 terraform apply                      # -> state list 9줄 (리소스 7 + data 2)
 terraform state show aws_instance.web
 jq -r '.resources[] | "\(.type).\(.name) <- \(.instances[0].dependencies)"' terraform.tfstate
-terraform destroy                    # "7 destroyed" — 반드시!
+terraform destroy                    # "7 destroyed". 반드시!
 bash ../scripts/check-leftover.sh    # 계정 잔존 0 확인
 ```
 
 - `practice/`의 `# TODO`를 채우며 진행합니다. 막히면 `solution/` 참고(스터디 후 공개 권장).
 - **오늘 SSH 접속은 하지 않습니다.** 키페어를 만들면 비밀키가 tfstate에 평문으로 남고 `.pem` 커밋 사고가 납니다. 성공 기준은 `instance_state = running` + 퍼블릭 IP 할당입니다.
 
-## 5. 실습 결과 제출 — 브랜치 파서 PR
+## 5. 실습 결과 제출. 브랜치 파서 PR
 
 실습이 끝나면 **`submissions/{github-id}/` 본인 폴더**에 올려주세요. 리뷰 후 제가 머지합니다.
 
@@ -105,7 +105,7 @@ git switch -c "week2/$ID"                              # 예: week2/kdh1834
 mkdir -p "submissions/$ID"
 cp practice/*.tf practice/example.tfvars "submissions/$ID/"
 cp practice/.terraform.lock.hcl          "submissions/$ID/"
-# + state-list.txt (destroy 전에 저장한 증빙 — 퍼블릭 IP와 ARN의 계정번호 마스킹)
+# + state-list.txt (destroy 전에 저장한 증빙: 퍼블릭 IP와 ARN의 계정번호 마스킹)
 # + observations.md (워크북 [관찰 ✍️] 답안)
 
 git add "submissions/$ID"
@@ -124,7 +124,7 @@ git restore practice/                                  # 복사 끝난 뒤 스�
 ## 6. 체크포인트 (Definition of Done)
 - [ ] `apply` 두 번 성공 (`5 added` → `2 added`), `state list` 9줄
 - [ ] `state show`로 EC2의 `private_ip` / `public_ip` / `instance_state` 확인
-- [ ] **`dependencies` 배열을 열어 화살표 지도와 대조** (이번 주 핵심)
+- [ ] **`dependencies` 배열을 열어 의존성 지도와 대조** (이번 주 핵심)
 - [ ] drift 실습: 콘솔에서 태그 변경 → `plan`이 되돌리자고 제안하는 것 확인
 - [ ] **`destroy` 완료 (`7 destroyed`) & `state list` 빈 출력**
 - [ ] **콘솔/스크립트로 EC2·EBS·EIP·NAT·VPC 잔존 0 확인**
@@ -145,14 +145,14 @@ git restore practice/                                  # 복사 끝난 뒤 스�
 | 콘솔에 아무것도 안 보임 | 리전 불일치 | 콘솔 우상단 "서울" 확인 |
 
 ## 8. 심화 도전과제 (Optional ⭐)
-- **L2**: private subnet 추가 (단, **NAT Gateway는 만들지 말 것** — 시간당 과금)
-- **L3-⭐**: `~` vs `-/+` 실험 — subnet `cidr_block`을 한 글자 바꿔 **연쇄 교체 3개**를 plan으로만 확인하고 원복 (워크북 B-6)
+- **L2**: private subnet 추가 (단, **NAT Gateway는 만들지 말 것**. 시간당 과금)
+- **L3-⭐**: `~` vs `-/+` 실험. subnet `cidr_block`을 한 글자 바꿔 **연쇄 교체 3개**를 plan으로만 확인하고 원복 (워크북 B-6)
 - **L3-⭐⭐**: SG 두 개를 서로 참조해 `Error: Cycle:` 재현 후 제거 (워크북 B-7)
-- **L4**: `user_data`로 nginx 설치 — 그런데 EC2는 route table association을 기다리지 않습니다. `depends_on`이 왜 필요한지 직접 겪어보기
+- **L4**: `user_data`로 nginx 설치. 그런데 EC2는 route table association을 기다리지 않습니다. `depends_on`이 왜 필요한지 직접 겪어보기
 - **L4**: `terraform graph` 출력을 <https://dreampuf.github.io/GraphvizOnline/> 에 붙여 그림으로 보기
 
 ## 9. 다음 주 예고 & 준비물
-- **Week3: Remote Backend & 잠금** — 오늘 뜯어본 `tfstate`(`serial`·`lineage`·평문 JSON)가 그대로 문제가 됩니다. S3 + 잠금으로 옮깁니다.
+- **Week3: Remote Backend & 잠금**. 오늘 뜯어본 `tfstate`(`serial`·`lineage`·평문 JSON)가 그대로 문제가 됩니다. S3 + 잠금으로 옮깁니다.
 - 예습: 원격 state가 왜 필요한지, `backend "s3"` 블록, `terraform init -migrate-state`
 
 ---

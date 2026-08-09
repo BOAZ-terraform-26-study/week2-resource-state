@@ -1,4 +1,4 @@
-# Week2 실습 — VPC + EC2 배포하고 state 뜯어보기
+# Week2 실습: VPC + EC2 배포하고 state 뜯어보기
 
 > 자세한 진행은 **[실습 워크북](../lecture/실습워크북.md)** 을 위에서 아래로 따라가세요. 이 파일은 요약입니다.
 
@@ -6,11 +6,11 @@
 
 `network.tf` · `compute.tf` · `outputs.tf`의 `# TODO`를 채워 **리소스 7개**를 만들고, `tfstate`를 뜯어보고, 역순으로 지웁니다.
 
-| 파일 | TODO 개수 | 긋는 화살표 |
+| 파일 | TODO 개수 | 잇는 참조 |
 |------|----------|-----------|
 | `network.tf` | 4개 (subnet / igw / route table / association) | ① ~ ⑦ |
 | `compute.tf` | 2개 (security group / EC2) | ⑧ ~ ⑪ |
-| `outputs.tf` | 2개 (네트워크 3개 / 컴퓨트 3개) | — |
+| `outputs.tf` | 2개 (네트워크 3개 / 컴퓨트 3개) |. |
 
 `versions.tf` · `providers.tf` · `variables.tf`, 그리고 `data "aws_availability_zones"` · `aws_vpc.main` · `data "aws_ami"`는 **이미 채워져 있습니다.** 읽기만 하세요.
 
@@ -24,7 +24,7 @@ terraform init                       # provider 다운로드 (예습에서 미�
 terraform fmt && terraform validate
 terraform plan                       # "Plan: 5 to add"
 terraform apply                      # yes -> state list 7줄
-terraform graph | grep '\->'         # 화살표 확인
+terraform graph | grep '\->'         # 의존성 간선 확인
 
 #  compute.tf + outputs.tf 두 번째 TODO 채우고
 terraform plan                       # "Plan: 2 to add"
@@ -37,7 +37,7 @@ jq 'keys' terraform.tfstate
 jq -r '.resources[] | "\(.type).\(.name)  <-  \(.instances[0].dependencies)"' terraform.tfstate
 
 #  마무리
-terraform plan -destroy              # "7 to destroy" — 삭제 순서 먼저 예측해볼 것
+terraform plan -destroy              # "7 to destroy". 삭제 순서 먼저 예측해볼 것
 terraform destroy                    # 반드시!
 terraform state list                 # 빈 출력
 bash ../scripts/check-leftover.sh    # 계정 잔존 0 확인
@@ -52,7 +52,7 @@ bash ../scripts/check-leftover.sh    # 계정 잔존 0 확인
 
 ## 막히면 여기 (힌트 단계)
 
-1. 레지스트리 문서 —
+1. 레지스트리 문서:
    [aws_subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) ·
    [aws_internet_gateway](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) ·
    [aws_route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) ·

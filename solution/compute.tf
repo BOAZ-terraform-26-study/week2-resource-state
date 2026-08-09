@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
-# compute.tf — AMI 데이터 소스 / security group / EC2  (리소스 2개)
-# 화살표(참조) ⑧ ⑨ ⑩ ⑪ 이 이 파일에서 만들어진다.
+# compute.tf: AMI 데이터 소스 / security group / EC2  (리소스 2개)
+# 참조 ⑧ ⑨ ⑩ ⑪ 이 이 파일에서 만들어진다.
 # ---------------------------------------------------------------------------
 
 # 최신 Amazon Linux 2023 AMI. AMI ID는 리전마다 다르고 몇 주마다 갱신되므로
@@ -45,7 +45,7 @@ data "aws_ami" "al2023" {
 resource "aws_security_group" "web" {
   name        = "${var.project_name}-web-sg"
   description = "boaz w2 lab: SSH from my IP only"
-  vpc_id      = aws_vpc.main.id # 화살표 ⑧ — 빼먹으면 기본 VPC에 만들어져 EC2 생성이 실패한다
+  vpc_id      = aws_vpc.main.id # 참조 ⑧. 빼먹으면 기본 VPC에 만들어져 EC2 생성이 실패한다
 
   ingress {
     description = "SSH from my IP"
@@ -67,10 +67,10 @@ resource "aws_security_group" "web" {
 }
 
 resource "aws_instance" "web" {
-  ami                    = data.aws_ami.al2023.id # 화살표 ⑪ (오늘 유일한 data. 참조)
+  ami                    = data.aws_ami.al2023.id # 참조 ⑪ (오늘 유일한 data. 참조)
   instance_type          = var.instance_type
-  subnet_id              = aws_subnet.public.id        # 화살표 ⑨
-  vpc_security_group_ids = [aws_security_group.web.id] # 화살표 ⑩ (리스트다)
+  subnet_id              = aws_subnet.public.id        # 참조 ⑨
+  vpc_security_group_ids = [aws_security_group.web.id] # 참조 ⑩ (리스트다)
 
   # 퍼블릭 IP는 서브넷의 map_public_ip_on_launch 하나로만 통제한다.
   # 여기에 associate_public_ip_address 를 또 쓰면 진실이 두 곳으로 갈리고,

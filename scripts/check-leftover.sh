@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# check-leftover.sh — destroy 후 계정에 과금되는 리소스가 남았는지 확인한다.
+# check-leftover.sh: destroy 후 계정에 과금되는 리소스가 남았는지 확인한다.
 #
 #   "terraform state list 가 비었다" ≠ "계정이 비었다"
 #   콘솔 클릭 5번 대신 이 스크립트 한 번으로 확인하세요. (실습워크북 C-4)
@@ -36,7 +36,7 @@ check() {
   fi
 }
 
-# 1) 살아있는 EC2 인스턴스 (terminated 는 제외 — 이미 죽은 것)
+# 1) 살아있는 EC2 인스턴스 (terminated 는 제외. 이미 죽은 것)
 #    태그로 좁히지 않는다: 실습 중 콘솔에서 손으로 띄운 인스턴스도 잡아야 하기 때문.
 LIVE=$(aws ec2 describe-instances --region "$R" \
   --filters "Name=instance-state-name,Values=pending,running,stopping,stopped" \
@@ -47,20 +47,20 @@ LIVE_D=$(aws ec2 describe-instances --region "$R" \
   --output text 2>/dev/null)
 check "EC2 인스턴스 (과금!)" "$LIVE" "$LIVE_D"
 
-# 2) 붙은 데 없는 EBS 볼륨 — GB-월로 계속 과금된다
+# 2) 붙은 데 없는 EBS 볼륨. GB-월로 계속 과금된다
 VOL=$(aws ec2 describe-volumes --region "$R" --filters Name=status,Values=available \
   --query 'length(Volumes)' --output text 2>/dev/null)
 VOL_D=$(aws ec2 describe-volumes --region "$R" --filters Name=status,Values=available \
   --query 'Volumes[].[VolumeId,Size,VolumeType,CreateTime]' --output text 2>/dev/null)
 check "미사용 EBS 볼륨 (과금!)" "$VOL" "$VOL_D"
 
-# 3) Elastic IP — 유휴 상태에서도 시간당 과금
+# 3) Elastic IP. 유휴 상태에서도 시간당 과금
 EIP=$(aws ec2 describe-addresses --region "$R" --query 'length(Addresses)' --output text 2>/dev/null)
 EIP_D=$(aws ec2 describe-addresses --region "$R" \
   --query 'Addresses[].[PublicIp,AllocationId,AssociationId]' --output text 2>/dev/null)
 check "Elastic IP (과금!)" "$EIP" "$EIP_D"
 
-# 4) NAT Gateway — 이번 실습에서는 아예 만들지 않아야 한다
+# 4) NAT Gateway. 이번 실습에서는 아예 만들지 않아야 한다
 NAT=$(aws ec2 describe-nat-gateways --region "$R" \
   --filter Name=state,Values=pending,available,deleting \
   --query 'length(NatGateways)' --output text 2>/dev/null)
@@ -69,7 +69,7 @@ NAT_D=$(aws ec2 describe-nat-gateways --region "$R" \
   --query 'NatGateways[].[NatGatewayId,State,VpcId]' --output text 2>/dev/null)
 check "NAT Gateway (과금!)" "$NAT" "$NAT_D"
 
-# 5) 이 스터디가 만든 VPC — 무료지만 리전당 5개 제한이라 다음 주 VpcLimitExceeded 예방
+# 5) 이 스터디가 만든 VPC. 무료지만 리전당 5개 제한이라 다음 주 VpcLimitExceeded 예방
 VPC=$(aws ec2 describe-vpcs --region "$R" --filters "$TAGF" \
   --query 'length(Vpcs)' --output text 2>/dev/null)
 VPC_D=$(aws ec2 describe-vpcs --region "$R" --filters "$TAGF" \
@@ -91,7 +91,7 @@ fi
 
 hr
 if [ "$FOUND" = "0" ]; then
-  echo "  전부 0 — 정리 완료. 오늘 실습 끝!"
+  echo "  전부 0. 정리 완료. 오늘 실습 끝!"
 else
   echo "  남은 것이 있습니다. terraform destroy 를 다시 실행하거나 콘솔에서 확인하세요."
   echo "  EBS/EIP/NAT 검사는 계정 전체를 보므로, 다른 프로젝트 것이 잡혔을 수도 있습니다."

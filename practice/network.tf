@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
-# network.tf — 리소스 5개(vpc / subnet / igw / route table / association)
-# 화살표 ① ~ ⑦ 을 여기서 긋습니다.  자세한 설명은 실습워크북 A-3 · A-4
+# network.tf: 리소스 5개(vpc / subnet / igw / route table / association)
+# 참조 ① ~ ⑦ 을 여기서 긋습니다.  자세한 설명은 실습워크북 A-3 · A-4
 # ---------------------------------------------------------------------------
 
 # [주어짐] 이 계정에서 쓸 수 있는 AZ를 AWS에 물어보는 데이터 소스.
@@ -18,22 +18,22 @@ resource "aws_vpc" "main" {
   tags = { Name = "${var.project_name}-vpc" }
 }
 
-# TODO(L1): 퍼블릭 서브넷.  (워크북 A-3 · 화살표 ① ②)
+# TODO(L1): 퍼블릭 서브넷.  (워크북 A-3 · 참조 ① ②)
 #   - 타입/이름: resource "aws_subnet" "public"
-#   - vpc_id                  = aws_vpc.main.id                                <- 화살표 ①
+#   - vpc_id                  = aws_vpc.main.id                                <- 참조 ①
 #   - cidr_block              = "10.0.1.0/24"
-#   - availability_zone       = data.aws_availability_zones.available.names[0]  <- 화살표 ②
+#   - availability_zone       = data.aws_availability_zones.available.names[0]  <- 참조 ②
 #   - map_public_ip_on_launch = true    (EIP 없이 퍼블릭 IP를 받게 하는 한 줄)
 #   - tags                    = { Name = "${var.project_name}-public" }
 
 
-# TODO(L1): 인터넷 게이트웨이.  (워크북 A-4 · 화살표 ③)
+# TODO(L1): 인터넷 게이트웨이.  (워크북 A-4 · 참조 ③)
 #   - 타입/이름: resource "aws_internet_gateway" "gw"
 #   - vpc_id = aws_vpc.main.id
 #   - tags   = { Name = "${var.project_name}-igw" }
 
 
-# TODO(L1): 라우트 테이블 + 0.0.0.0/0 -> IGW.  (워크북 A-4 · 화살표 ④ ⑤)
+# TODO(L1): 라우트 테이블 + 0.0.0.0/0 -> IGW.  (워크북 A-4 · 참조 ④ ⑤)
 #   - 타입/이름: resource "aws_route_table" "public"
 #   - vpc_id = aws_vpc.main.id
 #   - route 인라인 블록 하나:
@@ -42,7 +42,7 @@ resource "aws_vpc" "main" {
 #   - tags = { Name = "${var.project_name}-rt-public" }
 
 
-# TODO(L1): 라우트 테이블을 서브넷에 붙이는 연결.  (워크북 A-4 · 화살표 ⑥ ⑦)
+# TODO(L1): 라우트 테이블을 서브넷에 붙이는 연결.  (워크북 A-4 · 참조 ⑥ ⑦)
 #   "연결" 자체가 리소스입니다. 인자가 참조 두 개뿐인 리소스라서 그래프의 마지막 레벨이 됩니다.
 #   - 타입/이름: resource "aws_route_table_association" "public"
 #   - subnet_id      = aws_subnet.public.id
