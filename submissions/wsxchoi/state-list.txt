@@ -1,0 +1,131 @@
+data.aws_ami.al2023
+data.aws_availability_zones.available
+aws_instance.web
+aws_internet_gateway.gw
+aws_route_table.public
+aws_route_table_association.public
+aws_security_group.web
+aws_subnet.public
+aws_vpc.main
+# aws_instance.web:
+resource "aws_instance" "web" {
+    ami                                  = "ami-00f6db7984ad32b20"
+    arn                                  = "arn:aws:ec2:ap-northeast-2:<account-id>:instance/i-0e98aa8fef27e86dd"
+    availability_zone                    = "ap-northeast-2a"
+    disable_api_stop                     = false
+    disable_api_termination              = false
+    ebs_optimized                        = false
+    force_destroy                        = false
+    get_password_data                    = false
+    hibernation                          = false
+    host_id                              = [90mnull[0m[0m
+    iam_instance_profile                 = [90mnull[0m[0m
+    id                                   = "i-0e98aa8fef27e86dd"
+    instance_initiated_shutdown_behavior = "stop"
+    instance_lifecycle                   = [90mnull[0m[0m
+    instance_state                       = "running"
+    instance_type                        = "t3.micro"
+    ipv6_address_count                   = 0
+    ipv6_addresses                       = []
+    key_name                             = [90mnull[0m[0m
+    monitoring                           = false
+    outpost_arn                          = [90mnull[0m[0m
+    password_data                        = [90mnull[0m[0m
+    placement_group                      = [90mnull[0m[0m
+    placement_group_id                   = [90mnull[0m[0m
+    placement_partition_number           = 0
+    primary_network_interface_id         = "eni-0dab409deb616302c"
+    private_dns                          = "ip-10-0-1-55.ap-northeast-2.compute.internal"
+    private_ip                           = "10.0.1.55"
+    region                               = "ap-northeast-2"
+    secondary_private_ips                = []
+    security_groups                      = []
+    source_dest_check                    = true
+    spot_instance_request_id             = [90mnull[0m[0m
+    subnet_id                            = "subnet-0f14e441a42af0155"
+    tags                                 = {
+        "Name" = "boaz26-w2-wsxchoi-web"
+    }
+    tags_all                             = {
+        "ManagedBy" = "terraform"
+        "Name"      = "boaz26-w2-wsxchoi-web"
+        "Project"   = "boaz26-w2-wsxchoi"
+        "Study"     = "boaz-terraform-26"
+        "Week"      = "2"
+    }
+    tenancy                              = "default"
+    user_data_replace_on_change          = false
+    vpc_security_group_ids               = [
+        "sg-0e5647957d259c98b",
+    ]
+
+    capacity_reservation_specification {
+        capacity_reservation_preference = "open"
+    }
+
+    cpu_options {
+        amd_sev_snp           = [90mnull[0m[0m
+        core_count            = 1
+        nested_virtualization = [90mnull[0m[0m
+        threads_per_core      = 2
+    }
+
+    credit_specification {
+        cpu_credits = "unlimited"
+    }
+
+    enclave_options {
+        enabled = false
+    }
+
+    maintenance_options {
+        auto_recovery = "default"
+    }
+
+    metadata_options {
+        http_endpoint               = "enabled"
+        http_protocol_ipv6          = "disabled"
+        http_put_response_hop_limit = 2
+        http_tokens                 = "required"
+        instance_metadata_tags      = "disabled"
+    }
+
+    primary_network_interface {
+        delete_on_termination = true
+        network_interface_id  = "eni-0dab409deb616302c"
+    }
+
+    private_dns_name_options {
+        enable_resource_name_dns_a_record    = false
+        enable_resource_name_dns_aaaa_record = false
+        hostname_type                        = "ip-name"
+    }
+
+    root_block_device {
+        delete_on_termination = true
+        device_name           = "/dev/xvda"
+        encrypted             = false
+        iops                  = 3000
+        kms_key_id            = [90mnull[0m[0m
+        tags_all              = {
+            "ManagedBy" = "terraform"
+            "Project"   = "boaz26-w2-wsxchoi"
+            "Study"     = "boaz-terraform-26"
+            "Week"      = "2"
+        }
+        throughput            = 125
+        volume_id             = "vol-0535dac5cce3fd076"
+        volume_size           = 8
+        volume_type           = "gp3"
+    }
+}
+
+aws_ami.al2023  <-  
+aws_availability_zones.available  <-  
+aws_instance.web  <-  aws_security_group.web, aws_subnet.public, aws_vpc.main, data.aws_ami.al2023, data.aws_availability_zones.available
+aws_internet_gateway.gw  <-  aws_vpc.main
+aws_route_table.public  <-  aws_internet_gateway.gw, aws_vpc.main
+aws_route_table_association.public  <-  aws_internet_gateway.gw, aws_route_table.public, aws_subnet.public, aws_vpc.main, data.aws_availability_zones.available
+aws_security_group.web  <-  aws_vpc.main
+aws_subnet.public  <-  aws_vpc.main, data.aws_availability_zones.available
+aws_vpc.main  <-  
