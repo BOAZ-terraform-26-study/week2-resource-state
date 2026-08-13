@@ -6,19 +6,35 @@
 - `aws_route_table.public`이 `aws_internet_gateway.gw`보다 늦게 시작한 이유를 **참조 번호로**: `route table은 4단계, igw는 2단계, 따라서 igw가 먼저 생김.`
 
 ```
-[4단계]  aws_instance.web ┃ aws_route_table_association.public
-[3단계]  aws_security_group.web ┃ aws_route_table.public
-[2단계]  aws_internet_gateway.gw ┃ aws_subnet.public
+[4단계]  aws_route_table_association.public
+[3단계]  aws_instance.web ┃ aws_route_table.public
+[2단계]  aws_internet_gateway.gw ┃ aws_subnet.public ┃ aws_security_group.web
 [1단계]  aws_vpc.main
+
+aws_instance.web  (aws_subnet.public, aws_security_group.web)
+aws_route_table_association.public (aws_subnet.public, aws_route_table.public)
+
+aws_route_table.public(aws_vpc.main, aws_internet_gateway.gw)
+
+aws_security_group.web (aws_vpc.main)
+
+aws_internet_gateway.gw (aws_vpc.main)
+aws_subnet.public(aws_vpc.main)
+
+aws_vpc.main()
+
 ```
 
-- 가장 마지막에 `Creation complete`가 뜬 리소스: `aws_instance.web` / 의존성 지도의 예측과 같은가: `같다`
+- 가장 마지막에 `Creation complete`가 뜬 리소스: `aws_instance.web` / 의존성 지도의 예측과 같은가: `다르다`
+    - 의존성 depth가 가장 깊지만, 간선마다 걸리는 시간이 다르기 때문에 깊이와 꼭 비례하지는 않는다.
 - `state list` 줄 수: `9` / 그중 실제 AWS 리소스는 몇 개: `7`
-    - 실제 리소스 7개 + data 소스 2개
-    - `data.aws_ami.al2023`
-    - `data.aws_availability_zones.available`
+    - 실제 리소스 7개 
+    - data 소스 2개
+        - `data.aws_ami.al2023`
+        - `data.aws_availability_zones.available`
 
 - `subnet_az` 값: `subnet_az = "ap-northeast-2a"`
+    - 계정 설정할 때 디폴트 리전을 ap-northeast-2a로 잡았었음.
 
 ```
 aws_vpc.main: Creating...
@@ -49,19 +65,42 @@ aws_instance.web: Creation complete after 13s
 
 ### [관찰 ✍️] B-3 기록
 
-- `Creation complete` 순서: `___` → `___`
+- `Creation complete` 순서
+    - aws_vpc.main
+    - aws_internet_gateway.gw
+    - aws_route_table.public
+    - aws_security_group.web
+    - aws_subnet.public
+    - aws_route_table_association.public
+    - aws_instance.web
+
 - EC2 하나 만드는 데 걸린 초: `13초` / A-6의 네트워크 5개 전체는: `___`
 - 의존성 지도의 **4층은 association**인데, 로그에서 **가장 늦게 끝난** 것은 무엇이었나: `aws_instance.web`
-- 왜 다른가 (한 문장): `___`
+- 왜 다른가 (한 문장): 각 단계별 소요 시간이 다르기 때문. 
+    - `aws_instance.web`에 필요한 `aws_subnet.public`이 오래걸림.
 - 퍼블릭 IP가 붙었는데 EIP는 안 만들었습니다. 어느 인자 덕분인가: `map_public_ip_on_launch = true`
 
 ### [관찰 ✍️] C-2·C-3 기록
 
-- 가장 먼저 `Destroying...`이 뜬 리소스: `aws_route_table_association.public` / 그것이 **리프 노드인 이유**: `___`
+- 가장 먼저 `Destroying...`이 뜬 리소스: `aws_route_table_association.public`
+- 그것이 **리프 노드인 이유**
+    - 삭제 순서는 의존성 그래프를 뒤집어놓은 순서임
+    - 리프노드가 가장 먼저 삭제됨
+
+- 삭제된 순서 관찰
+    - aws_route_table_association.public
+    - aws_route_table.public
+    - aws_internet_gateway.gw
+    - aws_instance.web
+    - aws_subnet.public
+    - aws_security_group.web
+    - aws_vpc.main
+
 - 가장 오래 걸린 삭제와 초: `EC2, 1m1s`
-- 예측(C-1)이 틀린 지점: `___`
 - destroy 후 `state list` 줄 수: `0`
-- `resources` 배열 길이: `0` / `serial`: `18` → 왜 늘었을까: `___`
+- `resources` 배열 길이: `0` / `serial`: `18`
+    - `serial`는 왜 늘었을까: serial은 state가 갱신될 때마다 증가하는 값이기 때문
+
 
 ```
 aws_route_table_association.public: Destroying...
