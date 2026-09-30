@@ -20,7 +20,7 @@ variable "my_ip" {
 
   # 코드에서 "${var.my_ip}/32" 로 조립하므로, 여기에 이미 /32 가 붙어 있으면
   # "1.2.3.4/32/32" 가 되어 아래 cidrnetmask() 가 실패한다.
-  # 정규식보다 cidrnetmask() 가 낫다. "999.1.1.1" 같은 값도 걸러낸다.
+  # 정규식보다 cidrnetmask() 가 낫다. "999.1.1.1" 같은 값도 거부한다.
   validation {
     condition     = can(cidrnetmask("${var.my_ip}/32"))
     error_message = "my_ip는 1.2.3.4 처럼 순수 IPv4여야 합니다. /32나 CIDR을 넣지 마세요. (curl -4 ifconfig.me)"

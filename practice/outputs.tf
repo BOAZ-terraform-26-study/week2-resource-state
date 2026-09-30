@@ -1,7 +1,7 @@
 # TODO(L1): output 3개. 네트워크까지 만든 뒤(A-5) 필요한 것들.  (워크북 A-4)
 #   vpc_id     = aws_vpc.main.id
 #   subnet_id  = aws_subnet.public.id
-#   subnet_az  = aws_subnet.public.availability_zone   # data source가 골라준 AZ 확인용
+#   subnet_az  = aws_subnet.public.availability_zone   # data source가 선택한 AZ 확인용
 #   각 output에 description 을 꼭 붙이세요.
 
 

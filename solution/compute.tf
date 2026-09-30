@@ -8,7 +8,7 @@
 #
 # 이름 패턴을 'al2023-ami-2023.*' 로 **시작까지 고정**하는 이유:
 #   'al2023-ami-*-x86_64' 처럼 느슨하게 두면 아래 것들까지 후보에 들어오고
-#   most_recent = true 가 그중 가장 최근 것을 골라버린다.
+#   most_recent = true 가 그중 가장 최근 것을 선택한다.
 #     - al2023-ami-ecs-neuron-hvm-* : ECS 전용, 루트 볼륨 30GiB (EBS 비용 3.75배)
 #     - al2023-ami-ecs-hvm-*        : ECS 전용
 #     - al2023-ami-minimal-*        : SSM Agent·awscli 등이 빠진 최소 이미지(2GiB)
@@ -73,7 +73,7 @@ resource "aws_instance" "web" {
   vpc_security_group_ids = [aws_security_group.web.id] # 참조 ⑩ (리스트다)
 
   # 퍼블릭 IP는 서브넷의 map_public_ip_on_launch 하나로만 통제한다.
-  # 여기에 associate_public_ip_address 를 또 쓰면 진실이 두 곳으로 갈리고,
+  # 여기에 associate_public_ip_address 를 또 쓰면 설정이 두 곳에 나뉘고,
   # 나중에 그 값을 바꾸면 인스턴스가 통째로 재생성(-/+)된다.
 
   # 루트 볼륨을 명시해 비용을 눈으로 확인한다. 8GiB gp3 ≈ $0.73/월.
@@ -95,6 +95,6 @@ resource "aws_instance" "web" {
 # ---------------------------------------------------------------------------
 # 키페어(aws_key_pair)를 만들지 않습니다 = 오늘은 SSH로 접속하지 않습니다.
 #   - tls_private_key 로 키를 만들면 비밀키가 tfstate에 평문으로 저장된다
-#   - .pem 파일이 실습 폴더에 남아 PR로 커밋되는 사고가 난다
+#   - .pem 파일이 실습 폴더에 남아 PR로 커밋되는 사고가 발생한다
 # 오늘의 성공 기준은 "접속"이 아니라 instance_state = running + 퍼블릭 IP 할당입니다.
 # ---------------------------------------------------------------------------

@@ -49,7 +49,7 @@
 
 ### destroy 전 `terraform state list`
 ```
-(destroy하면 사라지니 미리 복사해둔 것, 9줄)
+(destroy하면 확인할 수 없으므로 미리 복사해둔 출력, 9줄)
 ```
 
 ### destroy 후 `terraform state list`
